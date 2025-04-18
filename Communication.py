@@ -10,10 +10,13 @@ class Client():
         self.s2 = socket.socket()
         client_port = int(input("entrez le numéro du port du serveur : "))
         clientname = input("pseudo : ")
-        self.myadress = ((socket.gethostname(), client_port))
-        self.s2.bind(self.myadress)
+        self.myadress = (('0.0.0.0',client_port))
+        self.s2.bind((self.myadress))
 
         self.s1 = socket.socket()
+        self.s1.bind(("0.0.0.0", 0))
+
+
         server_IP = input("entrez le numero du serbeur : ")
         server_port = int(input("entrez le numéro du port du serveur : "))
         self.server_adress = ((server_IP, server_port))
@@ -54,6 +57,7 @@ class Client():
                     print(f" {address[0]} : {info}")
 
                     if info["response"] == "ok":
+                        
 
                         self.inscription = True
                         
@@ -63,10 +67,9 @@ class Client():
             if self.inscription is True:
 
                 try:
-                    print("Serveur en écoute...")
+                    
                     self.s2.listen()
                     self.s3_client , self.s3_address = self.s2.accept()
-                    print(f"Connexion de {self.s3_address}")
 
                     data = self.s3_client.recv(1024)
 
