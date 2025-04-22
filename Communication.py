@@ -2,23 +2,26 @@ import socket
 import threading
 import json
 import sys
+from sys import argv
+from inputs import random_moves
 
 class Client():
 
     def __init__(self):
         
         self.s2 = socket.socket()
-        client_port = int(input("entrez le numéro du port du serveur : "))
-        clientname = input("pseudo : ")
+        client_port = int(argv[1])
+        clientname = argv[2]
         self.myadress = (('0.0.0.0',client_port))
+        print(self.myadress)
         self.s2.bind((self.myadress))
 
         self.s1 = socket.socket()
         self.s1.bind(("0.0.0.0", 0))
 
 
-        server_IP = input("entrez le numero du serbeur : ")
-        server_port = int(input("entrez le numéro du port du serveur : "))
+        server_IP = argv[3]
+        server_port = int(argv[4])
         self.server_adress = ((server_IP, server_port))
         
 
@@ -30,8 +33,7 @@ class Client():
                     "request": "subscribe",
                     "port": client_port,
                     "name": clientname,
-                    "matricules": ["12345", "67890"]}
-        print (Txet)
+                    "matricules": argv[5]}
         
         intro = json.dumps(Txet)
         message= intro.encode()
@@ -54,7 +56,6 @@ class Client():
 
                     info = json.loads(data.decode())
 
-                    print(f" {address[0]} : {info}")
 
                     if info["response"] == "ok":
                         
@@ -83,6 +84,15 @@ class Client():
                         message= json.dumps(txet).encode()                      
 
                         self.s3_client.sendall(message)
+                    
+                    if info["request"] == "play" :
+
+                        print("ysss")
+                        
+                        txet = random_moves(info)
+                        message= json.dumps(txet).encode()                      
+
+                        self.s3_client.sendall(message)
 
 
 
@@ -101,13 +111,10 @@ class Client():
 
         if self.address is not None:
 
-            message = data.encode()
+            txet = data
+            message= json.dumps(txet).encode()                      
 
-            totalsent = 0
-            
-            while totalsent < len(message) : 
-                send = self.s.sendto(message[totalsent:], self.address)
-                totalsent += send
+            self.s3_client.sendall(message)
                 
     def run(self):
 
