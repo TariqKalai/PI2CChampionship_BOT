@@ -8,12 +8,13 @@ from inputs import random_moves
 class Client():
 
     def __init__(self):
+
+        print(argv[1:])
         
         self.s2 = socket.socket()
         client_port = int(argv[1])
         clientname = argv[2]
         self.myadress = (('0.0.0.0',client_port))
-        print(self.myadress)
         self.s2.bind((self.myadress))
 
         self.s1 = socket.socket()
@@ -26,17 +27,18 @@ class Client():
         
 
         self.inscription = False
-
-
         
         Txet = {
                     "request": "subscribe",
                     "port": client_port,
                     "name": clientname,
-                    "matricules": argv[5]}
+                    "matricules": [argv[5]]
+                    }
         
+        print( Txet)
         intro = json.dumps(Txet)
         message= intro.encode()
+        print(message)
         totalsent = 0
         while totalsent < len(message) : 
             self.s1.connect(self.server_adress)
@@ -76,7 +78,6 @@ class Client():
 
                     info = json.loads(data.decode())
 
-                    print(f" {address[0]} : {info}")
 
                     if info["request"] == "ping":
 
@@ -87,7 +88,6 @@ class Client():
                     
                     if info["request"] == "play" :
 
-                        print("ysss")
                         
                         txet = random_moves(info)
                         message= json.dumps(txet).encode()                      
@@ -98,7 +98,7 @@ class Client():
 
                 except json.JSONDecodeError :
 
-                    print('oohh')
+                    print('oohh JSON ERROR')
 
                     pass
 
@@ -133,10 +133,6 @@ class Client():
                 line = sys.stdin.readline().rstrip()+' '
                 command = line [:line.index(' ')]
                 param = line[line.index(' ')+1:].rstrip()
-                if command in handlers : 
-                    handlers[command]() if param == '' else handlers[command](param)
-                else : 
-                    print("unkown command")
                     
 
 
