@@ -70,7 +70,7 @@ def random_moves(request:dict) -> dict :
 
 
 def tought_moves(request:dict)-> dict :
-    #set_pieces = avaiblable_pieces(request)
+    set_pieces = avaiblable_pieces(request)
 
     #Mathematical formulas wich converts from a list index to a grid style board
     #columns = index % 4
@@ -78,29 +78,67 @@ def tought_moves(request:dict)-> dict :
     #index = rows*4 +columns
 
     Board = request["state"]["board"]
-#   a modifier 
-    for index in range(len(Board)) :
-        if Board[index] != None :
-            print(index)
-            size = 3
-            columns = index % size
-            rows = index //size
-            for letter in Board[index] : 
-                try:
-                    for y in range(rows-1, rows+2):
-                        for x in range(columns-1, columns+2):
-                            print( f"x : {x}    y : {y}   index = {y*size+x}")
-                            
 
-                except IndexError:
-            
-                    pass
+    win_moves = check_around(Board)
+
+    
+    #makes a winnning move or a Random move
+    if win_moves != {} :
+        for letter in request["state"]["piece"] :
+            print('TRUE')
+            if letter in win_moves :
+                pos = win_moves[letter]
+            else:
+                num = randint(0,15)
+                while num in win_moves.values():
+                    
+                    pos = randint(0,15)
+                    num = randint(0,15)
+    
+
+    
+    else:
+        while True:
+            num = randint(0,15)
+
+            if request["state"]["board"][num] == None:
+                pos = num
+                break
+    
+    print(pos, request['state']['piece'], "ICIIIIII")
+
+    #checks if pieces are still availabe for the opponent
+    
+    if len(set_pieces) == 0 :
+        oppenent_piece = None
+
+    else:
+        oppenent_piece_set = set_pieces[randint(0,len(set_pieces)-1)]
+        oppenent_piece = ""
+
+        for i in oppenent_piece_set :
+            oppenent_piece += i
+
+    
+    response = {
+       "response": "move",
+       "move": {"pos" : pos, "piece": oppenent_piece},
+       "message": "Fun message"
+    }
+
+    return response
+
+
+    
 
 
 
 
 def check_around(Board : list):
     positions_dico = {}
+    
+    win_moves= {}
+    banned_moves = {}
     for index in range(len(Board)) :
         if Board[index] != None :
             
@@ -114,43 +152,72 @@ def check_around(Board : list):
             
             for key in positions_dico:
                 for result in key :
-                    index_list = []
+                    index_list_hori = []
+                    index_list_verti = []
                     essay_row = 0
                     essay_columns=0
                     essay_diagonal = 0
+                    
                     rand_index = positions_dico[result].pop()
                     positions_dico[result].add(rand_index)
                     row_value = int(rand_index)//4
                     columns_value = int(rand_index)%4
+
                     for result_2 in positions_dico[result] :
                         position = int(result_2)
                         if position//4 == row_value:
-                            
+                            index_list_hori.append(result_2)
                             essay_row +=1
                         if position % 4 == columns_value:
+                            
+                            index_list_verti.append(result_2)
                             essay_columns +=1
-                        if position//4 == row_value+1 or position//4 == row_value+2:
-                            if position%4 == columns_value+1 or position%4 == columns_value+2:
-                                essay_diagonal +=1
                     
                     if essay_columns == 3 :
 
+                        possible_values = {0,1,2,3}
+                        
+
                         print("Triples", key, "vertical")
+
+                        #Find the only position where we can place it
+                        
+                        for i in index_list_verti:
+
+                            if i//4 in possible_values:
+                                possible_values.remove(i//4)
+
+                        win_moves[key] = 4*possible_values.pop() +i%4
+                    
+                    
+
                     if essay_diagonal ==3 :
-
-                        print("Triples", key, "horizontal")
-
-                    if essay_row == 3 : 
 
                         print("Triples", key, "diagonal")
 
-                    
+                    if essay_row == 3 : 
 
-    return positions_dico
+                        print("Triples", key, "horizontal")
+                        
+                        possible_values = {0,1,2,3}
+                        
+                        for i in index_list_hori:
+
+                            if i%4 in possible_values:
+                                possible_values.remove(i%4)
+
+                        win_moves[key] = possible_values.pop() + (i//4) *4
+
+
+                         
+                        
+
+    print(win_moves)
+    return win_moves
 
 
 List_pieces = [ "BLEP", "BLFC", "BLFP", "SDEC",  "SDFP", 
                 "SLEC", "SLEP", "SLFC", "SLFP"]
-lister = ["BDEC", "SDEP", "SDFC", None, "BDFP", None, None, None, "BLEC", None, None, None ,None, None, None, None] 
+lister = ["BDEC", "SDEP", "SDFC", None, "BDFP", None, None, None, "JSHD", None, None, None ,None, None, None, None] 
 
-check_around(lister)
+print(check_around(lister))
