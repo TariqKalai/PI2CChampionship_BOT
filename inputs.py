@@ -84,25 +84,35 @@ def tought_moves(request:dict)-> dict :
     
     #makes a winnning move or a Random move
     if win_moves != {} :
+        print(win_moves)
         for letter in request["state"]["piece"] :
             print('TRUE')
             if letter in win_moves :
                 pos = win_moves[letter]
+                print(pos, "PEUT ETRE")
             else:
                 num = randint(0,15)
-                while num in win_moves.values():
-                    
-                    pos = randint(0,15)
-                    num = randint(0,15)
+                print(set(win_moves.values()),"je suis la")
+                while True:
+                    if num in set(win_moves.values()):
+                        print("recommence chef", num, "pas bon")
+                        num = randint(0,15)
+
+                    else:
+                        pos = num
+                        print(pos)
+                        break
     
 
     
     else:
         while True:
+            print("False")
             num = randint(0,15)
 
             if request["state"]["board"][num] == None:
                 pos = num
+                print("EYYE")
                 break
     
     print(pos, request['state']['piece'], "ICIIIIII")
@@ -152,8 +162,8 @@ def check_around(Board : list):
             
             for key in positions_dico:
                 for result in key :
-                    index_list_hori = []
-                    index_list_verti = []
+                    index_list_hori = {}
+                    index_list_verti = {}
                     essay_row = 0
                     essay_columns=0
                     essay_diagonal = 0
@@ -166,13 +176,27 @@ def check_around(Board : list):
                     for result_2 in positions_dico[result] :
                         position = int(result_2)
                         if position//4 == row_value:
-                            index_list_hori.append(result_2)
-                            essay_row +=1
-                        if position % 4 == columns_value:
+                            try:
+                                index_list_hori[row_value].append (result_2)
+                                essay_row +=1
+                            except KeyError:
+                                
+                                index_list_hori[row_value] = []
+                                index_list_hori[row_value].append (result_2)
+                                essay_row +=1
+
                             
-                            index_list_verti.append(result_2)
-                            essay_columns +=1
+                        if position % 4 == columns_value:
+                            try: 
+                                index_list_verti[columns_value].append (result_2)
+                                essay_columns +=1
+                            except:
+                                index_list_verti[columns_value] =[]
+                                index_list_verti[columns_value].append (result_2)
+                                essay_columns +=1
                     
+
+
                     if essay_columns == 3 :
 
                         possible_values = {0,1,2,3}
@@ -181,13 +205,15 @@ def check_around(Board : list):
                         print("Triples", key, "vertical")
 
                         #Find the only position where we can place it
-                        
                         for i in index_list_verti:
+                            for x in index_list_verti[i]:
+                                if x//4 in possible_values:
+                                    possible_values.remove(x//4)
 
-                            if i//4 in possible_values:
-                                possible_values.remove(i//4)
-
-                        win_moves[key] = 4*possible_values.pop() +i%4
+                            valeur = 4*possible_values.pop() +i%4
+                        if Board[valeur] == None:
+                            print("YESS", valeur)
+                            win_moves[key] = valeur
                     
                     
 
@@ -201,16 +227,18 @@ def check_around(Board : list):
                         
                         possible_values = {0,1,2,3}
                         
+                        
                         for i in index_list_hori:
-
-                            if i%4 in possible_values:
-                                possible_values.remove(i%4)
-
-                        win_moves[key] = possible_values.pop() + (i//4) *4
+                            for x in index_list_hori[i]:
+                                if x%4 in possible_values:
+                                    possible_values.remove(x%4)
+                        
+                        valeur = possible_values.pop() + (i//4) *4
+                        if Board[valeur] == None:
+                            win_moves[key] = valeur + (i//4) *4
 
 
                          
-                        
 
     print(win_moves)
     return win_moves
@@ -218,6 +246,6 @@ def check_around(Board : list):
 
 List_pieces = [ "BLEP", "BLFC", "BLFP", "SDEC",  "SDFP", 
                 "SLEC", "SLEP", "SLFC", "SLFP"]
-lister = ["BDEC", "SDEP", "SDFC", None, "BDFP", None, None, None, "JSHD", None, None, None ,None, None, None, None] 
+lister = ["BDEC", "SDEP", "SDFC", None, "BDFP", None, None, None, "JSHB", None, None, None ,None, None, None, None] 
 
 print(check_around(lister))
