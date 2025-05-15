@@ -12,14 +12,14 @@ def launch(i):
 
     
     subprocess.run(
-        ['python', 'PI2CChampionship_BOT/communication.py', str(port[i]), player[i], "LOCALHOST", "3000", matricules[i]],
+        ['python', 'PI2CChampionship_BOT/communication.py', str(port[i]), player[i], "LOCALHOST", "3000", matricules[i],"random"],
         text=True
     )
 
 #Launches the program 4 times
 for i in range(7):
 
-    print("Start :" ,[str(port[i]), player[i], "LOCALHOST", "3000", str(matricules[i])])
+    print("Start :" ,[str(port[i]), player[i], "LOCALHOST", "3000", str(matricules[i]), "random"])
 
     thread = Thread(target=launch, args=(i,))
     thread.start()

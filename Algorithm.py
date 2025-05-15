@@ -1,4 +1,4 @@
-
+import math
 
 lines = [
     #Horiziontal
@@ -69,12 +69,16 @@ def generate_moves(state):
     moves = []
 
     for pos in empty_positions:
-        for placing in available_pieces_list:
-                piece_place = ""
-                for i in placing:
-                    piece_place += i 
-                moves.append((pos, piece_place))
-    
+        if len(available_pieces_list)== 0:
+            moves.append((pos,None))
+        
+        else:
+            for placing in available_pieces_list:
+                    piece_place = ""
+                    for i in placing:
+                        piece_place += i 
+                    moves.append((pos, piece_place))
+        
     return moves 
 
 def apply_move(state, move):
@@ -93,7 +97,6 @@ def apply_move(state, move):
 
 def winning_line(line, board):
     pieces = [board[i] for i in line]
-    print("RTYUJNBVFh",pieces)
     for i in range(len(pieces)):
         if pieces[i] != None:
             pieces[i] = set(pieces[i])
@@ -142,16 +145,6 @@ def heuristic(state):
 
     return score
 
-import math
-from itertools import product
-
-# Constants
-ALL_PIECES = [''.join(p) for p in product('BS', 'LD', 'EF', 'CP')]
-WINNING_LINES = [
-    [0,1,2,3], [4,5,6,7], [8,9,10,11], [12,13,14,15],  # Rows
-    [0,4,8,12], [1,5,9,13], [2,6,10,14], [3,7,11,15],  # Columns
-    [0,5,10,15], [3,6,9,12]                           # Diagonals
-]
 
 def negamax(state, depth, alpha, beta, color):
     """
@@ -201,33 +194,7 @@ def get_best_move(state, depth=3):
         if score > best_score:
             best_score = score
             best_move = move
-    
+    print(best_move)
     return best_move  # Returns (position, piece_to_give)
 
 
-
-thing = {
-  "players": ["LUR", "FKY"],
-  "current": 0,
-  "board": [
-    None,
-    "BDEC",
-    None,
-    "SDFP",
-    None,
-    None,
-    None,
-    None,
-    None,
-    "SLFC",
-    None,
-    None,
-    "BLFP",
-    "BLEC",
-    None,
-    None
-  ], 
-  "piece": "BLEP"
-}
-
-            
