@@ -49,10 +49,10 @@ def available_pieces(state)-> list:
 
 def available_squares(state):
 
+
     Nonelist = []
     for i in range(16):
         if state["board"][i] == None :
-
             Nonelist.append(i)
 
     return Nonelist
@@ -63,32 +63,49 @@ def generate_moves(state):
     board = state["board"]
     piece_to_place = state["piece"]
     
-    empty_positions = available_squares(board)
-    available_pieces_list = available_pieces(board)
+    empty_positions = available_squares(state)
+    available_pieces_list = available_pieces(state)
     
     moves = []
 
     for pos in empty_positions:
         for placing in available_pieces_list:
-                moves.append((pos, placing))
+                piece_place = ""
+                for i in placing:
+                    piece_place += i 
+                moves.append((pos, piece_place))
     
     return moves 
+
+def apply_move(state, move):
+    '''Returns new state after applying move (position, piece_to_give)'''
+    new_state = {
+        "players": state["players"],
+        "current": 1 - state["current"],  # Switch player
+        "board": state["board"],
+        "piece": move[1]  # The piece we're giving to opponent
+    }
+    # Place the current piece on the board
+    new_state["board"][move[0]] = state["piece"]
+    return new_state
 
         
 
 def winning_line(line, board):
     pieces = [board[i] for i in line]
+    print("RTYUJNBVFh",pieces)
+    for i in range(len(pieces)):
+        if pieces[i] != None:
+            pieces[i] = set(pieces[i])
 
     for i in pieces:
         if i == None:
             return False
+        
     
-    for charcteristic in range(4):
+    commun= set.intersection(*pieces)
 
-        commun = [p[charcteristic] for p in pieces]
-        if all(t == commun[0] for t in commun):
-            return True
-    return False
+    return len(commun) >= 1  # True if ≥1 shared trait
 
 
 def winning_board(board):
@@ -124,6 +141,69 @@ def heuristic(state):
                 score += 3  # possible setup
 
     return score
+
+import math
+from itertools import product
+
+# Constants
+ALL_PIECES = [''.join(p) for p in product('BS', 'LD', 'EF', 'CP')]
+WINNING_LINES = [
+    [0,1,2,3], [4,5,6,7], [8,9,10,11], [12,13,14,15],  # Rows
+    [0,4,8,12], [1,5,9,13], [2,6,10,14], [3,7,11,15],  # Columns
+    [0,5,10,15], [3,6,9,12]                           # Diagonals
+]
+
+def negamax(state, depth, alpha, beta, color):
+    """
+    Negamax with Alpha-Beta pruning for Quarto.
+    
+    Args:
+        state: Current game state (dict with 'board' and 'piece')
+        depth: Search depth remaining
+        alpha: Best score for maximizer
+        beta: Best score for minimizer
+        color: 1 (maximizing player) or -1 (minimizing)
+        
+    Returns:
+        Best score for current player
+    """
+    # Base case: Terminal node or max depth reached
+    if winning_board(state['board']) or depth == 0:
+        return color * heuristic(state)
+    
+    best_score = -math.inf
+
+    for move in generate_moves(state):
+        # Apply the move and recurse
+        new_state = apply_move(state, move)
+        score = -negamax(new_state, depth-1, -beta, -alpha, -color)
+        
+        # Update best score and alpha
+        best_score = max(best_score, score)
+        alpha = max(alpha, score)
+        
+        # Alpha-beta pruning
+        if alpha >= beta:
+            break
+    
+    return best_score
+
+def get_best_move(state, depth=3):
+    """Wrapper to find the best move using Negamax"""
+    best_score = -math.inf
+    best_move = None
+    
+    print("ICI")
+    for move in generate_moves(state):
+        new_state = apply_move(state, move)
+        score = -negamax(new_state, depth-1, -math.inf, math.inf, -1)
+        
+        if score > best_score:
+            best_score = score
+            best_move = move
+    
+    return best_move  # Returns (position, piece_to_give)
+
 
 
 thing = {
