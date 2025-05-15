@@ -1,12 +1,25 @@
 import Algorithm
-state = {
+
+state0 = {
   "players": ["LUR", "FKY"],
   "current": 0,
   "board": [
     None, None, None, None,
-    "BDEC", "SDFC", None, None,
+    None, "SDFC", None, None,
     None, None, None, None,
     "BLEP", None, "SLFC", None
+  ],
+  "piece": "SDEP"
+   }
+
+state1 = {
+  "players": ["LUR", "FKY"],
+  "current": 0,
+  "board": [
+     None, None, None,     None,
+    "BDEC", "SDFC", None, None,
+     None,   None,     None,     None,
+    "BLEP",  None, "SLFC", None
   ],
   "piece": "SDEP"
    }
@@ -47,6 +60,30 @@ state4 ={
   "piece": "SLEC"
 }
 
+state5 = {
+  "players": ["LUR", "FKY"],
+  "current": 0,
+  "board": [
+    "SDEC", "SDEP", None, None, 
+    None, None, None, None,
+    None, None, None, None,
+    None, None, None, None
+  ],
+  "piece": "BLEP"
+}
+
+state6  = {
+  "players": ["LUR", "FKY"],
+  "current": 0,
+  "board": [
+    "SDEC", "SDEP", "SDFC", None, 
+    None, None, None, None,
+    None, None, None, None,
+    None, None, None, None
+  ],
+  "piece": "BLEP"
+}
+
 
 
 
@@ -67,7 +104,7 @@ def test_available_pieces():
   {"S", "L", "E", "P"},
   {"S", "L", "F", "P"}]
     for piece in Dispo:
-        assert piece in Algorithm.available_pieces(state)
+        assert piece in Algorithm.available_pieces(state1)
 
 
 
@@ -78,7 +115,7 @@ def test_available_squares():
     Cases = [0,1,2,3,6,7,8,9,10,11,13,15]
 
     for i in Cases:
-        assert i in Algorithm.available_squares(state)
+        assert i in Algorithm.available_squares(state1)
 
 
 
@@ -112,15 +149,15 @@ def test_apply_move():
         "piece": "SDEC"  # The piece we're giving to opponent
     }
 
-    assert Algorithm.apply_move(state,(1, "SDEC")) == new_state
+    assert Algorithm.apply_move(state1,(1, "SDEC")) == new_state
 
 
 
 def test_winning_line():
 
-    assert Algorithm.winning_line([0,1,2,3], state["board"]) == False
+    assert Algorithm.winning_line([0,1,2,3], state1["board"]) == False
 
-    assert  Algorithm.winning_line([4,5,6,7], state["board"]) == False
+    assert  Algorithm.winning_line([4,5,6,7], state1["board"]) == False
 
     assert  Algorithm.winning_line([0,1,2,3], state2["board"]) == True
 
@@ -129,7 +166,7 @@ def test_winning_line():
 
 def test_winning_board():
     
-    assert Algorithm.winning_board(state["board"]) == False
+    assert Algorithm.winning_board(state1["board"]) == False
     assert Algorithm.winning_board(state2["board"]) == True
 
 
@@ -138,7 +175,9 @@ def test_heuristic():
     
     assert Algorithm.heuristic(state2) == 100
     assert Algorithm.heuristic(state3) == 100
-    assert Algorithm.heuristic(state) == 6
+    assert Algorithm.heuristic(state5) == 3
+    assert Algorithm.heuristic(state6) == 10
+    assert Algorithm.heuristic(state0) == 3
 
 
 

@@ -15,7 +15,7 @@ lines = [
     
     #Diagonal
     [0,5,10,15],
-    [2,6,8,12],
+    [3,6,9,12],
 ]
 
 
@@ -140,7 +140,9 @@ def heuristic(state):
     score = 0
     for line in lines:
         pieces = [board[i] for i in line if board[i] is not None]
+
         if len(pieces) == 3:
+            
             # * unpack les elements pour donner 3 set separé
             common = set.intersection(*(set(p) for p in pieces))
 
@@ -148,9 +150,12 @@ def heuristic(state):
                 score += 10  # 3 pieces affilé attention presque victoire
 
         elif len(pieces) == 2:
+            print(pieces)
             common = set.intersection(*(set(p) for p in pieces))
+            print(common)
 
-            if len(common) >= 2:
+            if len(common) >= 1:
+                print("yes")
                 score += 3  # possible setup
 
     return score
@@ -205,8 +210,24 @@ def get_best_move(state, depth=3):
         if score > best_score:
             best_score = score
             best_move = move
+
     print(best_move)
     return best_move  # Returns (position, piece_to_give)
 
 
 
+
+
+state6 = {
+  "players": ["LUR", "FKY"],
+  "current": 0,
+  "board": [
+    None, None, None, None,
+    "BDEC", "SDFC", None, None,
+    None, None, None, None,
+    "BLEP", None, "SLFC", None
+  ],
+  "piece": "SDEP"
+   }
+
+print(heuristic(state6))
