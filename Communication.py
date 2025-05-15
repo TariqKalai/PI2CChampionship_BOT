@@ -3,11 +3,13 @@ import threading
 import json
 import sys
 from sys import argv
-from inputs import random_moves
+from inputs import random_moves, tought_moves
+from Algorithm import get_best_move
 
 class Player():
 
-    '''Player class made for the server Quarto available at https://github.com/qlurkin/PI2CChampionshipRunner'''
+    '''Player class made for the server Quarto available at https://github.com/qlurkin/PI2CChampionshipRunner to run you need to launch and write
+    [your port][pseudo][IP][port server][matricule]'''
 
     def __init__(self):
         
@@ -17,6 +19,7 @@ class Player():
         server_IP = argv[3]
         server_port = int(argv[4])
         matricules = argv[5]
+        self.methode = argv[6]
 
         
         #Binding IPs and specific port to player
@@ -29,7 +32,6 @@ class Player():
 
 
         self.server_adress = ((server_IP, server_port))
-        print(self.server_adress)
         
         
         self.inscription = False
@@ -65,6 +67,7 @@ class Player():
                     data, address = self.s1.recvfrom(1024)
 
                     info = json.loads(data.decode())
+                    print(info)
 
 
                     if info["response"] == "ok":
@@ -86,6 +89,7 @@ class Player():
                     data = self.s3_client.recv(1024)
 
                     info = json.loads(data.decode())
+                    print( info)
 
                     #this section checks what kind of request the client sent us,
                     #  for a ping it will respond a pong and for a play it will play.... what else
@@ -98,8 +102,19 @@ class Player():
                     
                     if info["request"] == "play" :
 
+                        if self.methode == "Think":
+                            move= get_best_move(info["state"])
+
+                            txet =  {
+                                       "response": "move",
+                                       "move": {"pos" : move[0], "piece": move[1]},
+                                       "message": "Think AI THINK"
+                                    }
+
                         
-                        txet = random_moves(info)
+                        elif self.methode == "random":
+                            txet = random_moves(info)
+                            
                         message= json.dumps(txet).encode()                      
 
                         self.s3_client.sendall(message)
@@ -113,18 +128,13 @@ class Player():
                     pass
 
     def run(self):
-        '''Runs the program....... what else should it do???'''
+
+        '''Runs the program and threads....... what else should it do???'''
 
         self.running = True
         self.address = None
 
         threading.Thread(target= self._listen).start()
-
-
-        while self.running : 
-                line = sys.stdin.readline().rstrip()+' '
-                command = line [:line.index(' ')]
-                param = line[line.index(' ')+1:].rstrip()
                     
 
 

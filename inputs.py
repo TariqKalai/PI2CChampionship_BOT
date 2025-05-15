@@ -83,10 +83,10 @@ def tought_moves(request:dict)-> dict :
 
     
     #makes a winnning move or a Random move
-    if win_moves != {} :
+    if win_moves != {} : 
         print(win_moves)
         for letter in request["state"]["piece"] :
-            print('TRUE')
+            print('je suis ici ')
             if letter in win_moves :
                 pos = win_moves[letter]
                 print(pos, "PEUT ETRE")
@@ -247,5 +247,3 @@ def check_around(Board : list):
 List_pieces = [ "BLEP", "BLFC", "BLFP", "SDEC",  "SDFP", 
                 "SLEC", "SLEP", "SLFC", "SLFP"]
 lister = ["BDEC", "SDEP", "SDFC", None, "BDFP", None, None, None, "JSHB", None, None, None ,None, None, None, None] 
-
-print(check_around(lister))
