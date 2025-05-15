@@ -1,9 +1,8 @@
 import socket
 import threading
 import json
-import sys
 from sys import argv
-from inputs import random_moves, tought_moves
+from inputs import random_moves
 from Algorithm import get_best_move
 
 class Player():

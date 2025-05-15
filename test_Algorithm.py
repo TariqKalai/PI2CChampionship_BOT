@@ -48,6 +48,8 @@ state4 ={
 }
 
 
+
+
 def test_available_pieces():
     
     
@@ -131,12 +133,15 @@ def test_winning_board():
     assert Algorithm.winning_board(state2["board"]) == True
 
 
-#
-#def test_heuristic():
-#    pass
-#
-#
-#
+
+def test_heuristic():
+    
+    assert Algorithm.heuristic(state2) == 100
+    assert Algorithm.heuristic(state3) == 100
+    assert Algorithm.heuristic(state) == 6
+
+
+
 #def test_negamax():
 #    pass
 #

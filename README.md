@@ -1,4 +1,5 @@
 # PI2CChampionship_BOT
+Ce programme est un bot développé dans le cadre du cours de projet informatique PI2C à l’ECAM, destiné au jeu Quarto. Il communique avec le projet GitHub suivant : [https://github.com/qlurkin/PI2CChampionshipRunner].
 
 ## Lancer le bot
 
