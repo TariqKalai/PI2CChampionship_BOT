@@ -12,7 +12,7 @@ Pour lancer le bot, procédez comme suit :
 2. Lancer le code dans le terminal :
 
     ```powershell 
-    python .../Communication <Port_du_bot> <Pseudo> <Adresse_IP_du_serveur> <Port_du_serveur> <Matricule> <Think|Random>
+    python .../Communication.py <Port_du_bot> <Pseudo> <Adresse_IP_du_serveur> <Port_du_serveur> <Matricule> <Think|Random>
 
 
 
