@@ -215,19 +215,3 @@ def get_best_move(state, depth=3):
     return best_move  # Returns (position, piece_to_give)
 
 
-
-
-
-state6 = {
-  "players": ["LUR", "FKY"],
-  "current": 0,
-  "board": [
-    None, None, None, None,
-    "BDEC", "SDFC", None, None,
-    None, None, None, None,
-    "BLEP", None, "SLFC", None
-  ],
-  "piece": "SDEP"
-   }
-
-print(heuristic(state6))
